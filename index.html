@@ -1,0 +1,887 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Растения — занятие для детей 6 лет | Подготовка к школе с Яшей</title>
+<meta name="description" content="Интерактивное занятие для детей 6 лет: что нужно растению, как растёт растение, счёт до 10, слова и задачки. Подготовка к школе с папильоном Яшей.">
+<style>
+
+  :root{ --green:#2E7D32; --ink:#1a1a1a; --paper:#FAF6EC; --line:#e0dccf; --card:#fff;
+         --red:#D32F2F; --blue:#0D3C8F; }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+  html,body{margin:0;height:100%;background:var(--paper);color:var(--ink);
+            font-family:"Segoe UI",Arial,sans-serif;overflow-x:hidden}
+  img{object-fit:contain;display:block;max-height:16vh}
+  h1{font-size:clamp(30px,7vw,50px);color:var(--green);text-align:center;line-height:1.15;margin:6px 0}
+  h2{font-size:clamp(32px,7.5vw,52px);color:var(--green);text-align:center;line-height:1.15;margin:6px 0}
+  p{font-size:clamp(26px,6vw,38px);line-height:1.3;margin:6px 0;text-align:center}
+  .sub{font-size:clamp(24px,5.4vw,34px);color:var(--ink);text-align:center;margin:4px 0 8px}
+  .sub.green{color:var(--green);font-weight:700}
+  .sub.plain{font-weight:400}
+  .top{width:100%;display:flex;justify-content:space-between;align-items:center;
+       font-size:clamp(17px,3.8vw,24px);color:var(--green);font-weight:400}
+  .counter{font-size:clamp(17px,3.8vw,24px);color:var(--green);font-weight:400}
+  .wrap{position:relative;min-height:100%;display:flex;flex-direction:column}
+  .screen{display:none;flex-direction:column;align-items:center;gap:8px;min-height:100vh;padding:10px 12px 130px;position:relative}
+  .screen.on{display:flex}
+  .row{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;width:100%;max-width:760px}
+  .btn{font-size:clamp(17px,3.8vw,24px);min-height:56px;padding:10px 18px;border-radius:14px;
+       border:2px solid var(--green);background:#fff;color:var(--green);font-weight:700;
+       cursor:pointer;touch-action:manipulation;font-family:inherit}
+  .btn.main{background:var(--green);color:#fff}
+  .btn.ok{background:var(--green);color:#fff;border-color:var(--green)}
+  /* буквы-варианты в «Собери слово»: клетки компактные, буквы крупные */
+  .btn.let{min-width:46px;min-height:42px;padding:2px 6px;font-size:clamp(28px,7vw,38px);line-height:1.1}
+  #s4 #letterBox{gap:6px}
+  /* бледная подсказка буквы в клетке слова — ребёнок читает сам */
+  .slot .ghost{opacity:.16}
+  .card{background:var(--card);border:2px solid #cfcfcf;border-radius:16px;padding:6px;
+        display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;max-width:calc(33.3% - 14px)}
+  .card .pic{width:100%;aspect-ratio:1/1;border-radius:10px;object-fit:cover}
+  .card img{max-height:13vh}
+  .card .word{font-size:clamp(16px,3.6vw,22px);font-weight:700;text-align:center;line-height:1.15}
+  .card.shake{animation:sh .45s}
+  .card.gone{opacity:.25;pointer-events:none}
+  @keyframes sh{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+  .vowel{color:var(--red) !important}
+  .cons{color:var(--blue) !important}
+  .feedback{font-size:clamp(28px,5.8vw,40px);font-weight:700;color:var(--green);text-align:center;min-height:1.2em}
+  .video{width:100%;max-height:72vh;border-radius:14px;background:transparent;object-fit:contain}
+  .logo{max-width:min(58vw,320px);max-height:26vh;border-radius:22px;border:4px solid #fff;
+        box-shadow:0 6px 26px rgba(0,0,0,.18)}
+  .back{position:fixed;left:10px;bottom:12px;z-index:60;background:rgba(255,255,255,.6);
+        border:2px solid var(--green);color:var(--green);border-radius:22px;
+        padding:5px 14px;font-size:17px;line-height:1.2;cursor:pointer;opacity:.8;font-weight:700}
+  .back:active{background:rgba(255,255,255,.9)}
+  .foot{position:fixed;left:0;right:0;bottom:0;padding:10px 12px calc(16px + env(safe-area-inset-bottom));
+        background:linear-gradient(180deg,rgba(250,246,236,0) 0%,var(--paper) 45%);display:flex;gap:12px;
+        justify-content:center;z-index:2147483000}
+  .slots{display:flex;gap:6px;justify-content:center;width:100%;max-width:560px}
+  .slot{width:17%;aspect-ratio:1/1;border:2px dashed #cfcfcf;border-radius:12px;background:#fff;
+        display:flex;align-items:center;justify-content:center;font-size:clamp(15px,3.4vw,19px);
+        color:#b0b0b0;font-weight:700;min-width:0}
+  .slot.filled{border-style:solid;border-color:var(--green);background:#F0F7F0;padding:3px}
+  .slot.filled img{width:100%;height:100%;object-fit:contain;border-radius:8px}
+  .slot.full{font-size:clamp(30px,7vw,46px);letter-spacing:0}
+  .ls{min-width:52px;min-height:56px;display:flex;align-items:center;justify-content:center;
+      font-size:clamp(26px,6vw,38px);font-weight:800;letter-spacing:-1px}
+  .stars{font-size:52px;text-align:center;line-height:1}
+  .final{font-family:Georgia,"Times New Roman",serif;font-style:italic;font-size:clamp(28px,6.4vw,42px);
+         text-align:center;color:var(--green)}
+  .momcard{background:#fff;border:2px solid var(--line);border-radius:14px;padding:10px 14px;max-width:620px}
+  .momcard p{font-size:clamp(18px,4vw,26px) !important;margin:0 0 4px}
+  .momcard p:last-child{margin:0}
+  .skor{color:var(--green);font-size:clamp(22px,5vw,32px);text-align:center;font-weight:700;margin:2px 0}
+  .skor.big{font-size:clamp(26px,6vw,38px)}
+  .example{font-size:clamp(34px,8vw,54px);font-weight:800;text-align:center;color:#1a1a1a;line-height:1.2}
+  .example.solved{color:var(--green)}
+  .taskpic{max-height:30vh;max-width:min(80vw,560px);border-radius:14px}
+  .placeholder{border:2px dashed #cfcfcf;border-radius:16px;background:#fff;
+    color:#9e9e9e;font-weight:600;font-size:clamp(15px,3.6vw,20px);
+    display:flex;align-items:center;justify-content:center;text-align:center;
+    padding:10px;max-width:min(80vw,560px)}
+  /* ── эмоции героев (как в занятии «Профессии на транспорте») ── */
+  .heroReward{display:flex;align-items:center;gap:10px;background:#fff;border:2px solid var(--green);
+              border-radius:16px;padding:6px 12px;max-width:560px;animation:pop .4s}
+  .heroReward img{max-height:25vh;border-radius:14px}
+  .heroReward .hrtext{font-size:clamp(20px,4.8vw,28px);font-weight:800;color:var(--green)}
+  .heroEmotion{display:flex;align-items:center;gap:10px;background:#fff;border:2px solid var(--green);
+               border-radius:16px;padding:6px 12px;max-width:560px;animation:pop .4s}
+  .heroEmotion img{max-height:22vh;border-radius:14px}
+  .heroEmotion .hrtext{font-size:clamp(22px,5.2vw,30px);font-weight:800;color:var(--green)}
+  .heroThink{display:flex;align-items:center;gap:10px;background:#fff;border:2px solid var(--line);
+             border-radius:16px;padding:6px 12px;max-width:560px;animation:pop .4s}
+  .heroThink img{max-height:14vh;border-radius:14px}
+  .heroThink .hrtext{font-size:clamp(18px,4.2vw,24px);font-weight:700;color:#8a8474}
+  @keyframes pop{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
+  /* ── фон меняется от задания к заданию; титул, скороговорка и финал — беж ── */
+  #s0,#ss,#s7,#s8{background:var(--paper)}
+  #s1{background:#EAF6EE}
+  #s2{background:#FBF6E3}
+  #s3{background:#FDEFE3}
+  #s4{background:#FCEDEF}
+  #s5{background:#EDF6EA}
+  #s6{background:#EEF1F8}
+  /* титул: видео «Начало» по центру */
+  #s0{justify-content:center}
+  #s0 .video{max-height:46vh;max-width:min(82vw,560px)}
+  #ss{justify-content:center}
+  #ss .video{max-height:56vh}
+  /* задание 1: карточки «что нужно растению» — крупные, 3 в ряд */
+  #s1 .card{width:31%;max-width:31%}
+  #s1 .card .pic{max-height:20vh}
+  #s1 .taskpic{max-height:20vh}
+  /* задание 3: одна кнопка-семечко, посаженные семечки под грядкой */
+  #s3 .taskpic{max-height:24vh}
+  .seed{display:flex;flex-direction:column;align-items:center;gap:2px;background:#fff;
+        border:2px solid var(--green);border-radius:14px;padding:6px 14px;
+        cursor:pointer;touch-action:manipulation}
+  .seed img{width:44px;height:44px;object-fit:contain;border-radius:8px}
+  .seed span{font-size:clamp(15px,3.4vw,19px);font-weight:700}
+  .planted{min-height:56px;align-items:center;gap:4px}
+  .planted img{width:30px;height:30px;border-radius:6px;object-fit:cover}
+  .planted .fl{font-size:30px;line-height:1}
+  .bign{font-size:clamp(44px,11vw,64px);font-weight:800;line-height:1;color:var(--green)}
+  /* задание 6: пары-мемори */
+  #s6 .memcard{width:31%;max-width:31%}
+  #s6 .memcard.small{width:22%;max-width:22%}
+  .memcard{position:relative;cursor:pointer;perspective:700px}
+  .memcard .in{position:relative;width:100%;transition:transform .45s;transform-style:preserve-3d}
+  .memcard.flipped .in{transform:rotateY(180deg)}
+  .memcard .face{aspect-ratio:1/1;width:100%;display:flex;flex-direction:column;align-items:center;
+                 justify-content:center;gap:4px;border-radius:14px;border:2px solid #cfcfcf;background:#fff;
+                 backface-visibility:hidden;-webkit-backface-visibility:hidden}
+  .memcard .back{position:absolute;inset:0;font-size:clamp(30px,8vw,44px);
+                 background:linear-gradient(160deg,#E8F5E9,#C8E6C9);border-color:var(--green)}
+  .memcard .front{transform:rotateY(180deg);padding:5px}
+  .memcard .front img{width:100%;height:100%;object-fit:contain;border-radius:10px;max-height:none}
+  .memcard .front .word{font-size:clamp(16px,3.6vw,22px);font-weight:700;line-height:1.15}
+  .memcard.gone{opacity:.25;pointer-events:none}
+  .memcard.shake{animation:sh .45s}
+  /* задачки: предметы в ряд, строго одного размера (квадрат), как в чек-листе */
+  .birds{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;align-items:center;width:100%}
+  .birds img{width:min(15vh,15%);aspect-ratio:1/1;height:auto;object-fit:contain;border-radius:8px}
+  /* финал */
+  #s7,#s8{justify-content:center}
+  #s7 .video{max-height:40vh}
+  #s8 .video{max-height:34vh}
+  #s8 .momcard{max-width:540px;padding:8px 12px}
+  #s8 .momcard p{font-size:clamp(15px,3.6vw,20px) !important}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <button class="back" id="backBtn" data-act="goBack()">← Ещё разок!</button>
+
+  <!-- ЭКРАН 1. ТИТУЛ -->
+  <section class="screen" id="s0">
+    <video class="logo" id="vidlogo" src="video/logo_yasha.mp4" poster="images/poster_logo.jpg"
+           autoplay muted loop playsinline preload="metadata"></video>
+    <h1>РАСТЕНИЯ</h1>
+    <p class="sub green">Приключение с Яшей и Баловашкой!</p>
+    <video class="video" id="vidnach" src="video/nachalo.mp4" poster="images/poster_nachalo.jpg"
+           playsinline preload="metadata"></video>
+    <div class="row"><button class="btn main" data-act="playStart()">▶ Играть</button></div>
+  </section>
+
+  <!-- ЗАДАНИЕ 1. ЧТО НУЖНО РАСТЕНИЮ -->
+  <section class="screen" id="s1">
+    <div class="top"><span>Задание 1 из 6</span><span class="counter" id="cntN"></span></div>
+    <p class="sub green">Что нужно растению?</p>
+    <img class="taskpic" id="needPic" alt="растение">
+    <p class="sub green plain" id="q1Q">Нажми на всё, что нужно растению!</p>
+    <div class="row" id="needBox"></div>
+    <div class="feedback" id="fbN"></div>
+  </section>
+
+  <!-- ЗАДАНИЕ 2. ЧТО СНАЧАЛА, ЧТО ПОТОМ -->
+  <section class="screen" id="s2">
+    <div class="top"><span>Задание 2 из 6</span><span class="counter" id="cntP"></span></div>
+    <p class="sub green">Что сначала, что потом</p>
+    <p class="sub green plain" id="q2Q">Разложи по порядку: как растёт растение!</p>
+    <div class="slots" id="slotRow"></div>
+    <div class="row" id="orderBox"></div>
+    <div class="feedback" id="fbP"></div>
+  </section>
+
+  <!-- ЗАДАНИЕ 3. ПОСАДИ ЦВЕТЫ (счёт до 10) -->
+  <section class="screen" id="s3">
+    <div class="top"><span>Задание 3 из 6</span><span class="counter" id="cntG"></span></div>
+    <p class="sub green">Посади цветы</p>
+    <img class="taskpic" id="bedPic" alt="грядка">
+    <p class="sub green plain" id="q3Q"></p>
+    <div class="row planted" id="plantedRow"></div>
+    <div class="feedback" id="fbG"></div>
+    <button class="seed" id="seedBtn" data-act="plantPick(el)">
+      <img src="images/zerno.jpg" alt="семечко"><span>Семечко</span>
+    </button>
+  </section>
+
+  <!-- СКОРОГОВОРКА (середина занятия) -->
+  <section class="screen" id="ss">
+    <h2>Скороговорка</h2>
+    <video class="video" id="vidskor" src="video/skorogovorka.mp4" poster="images/poster_skorogovorka.jpg"
+           playsinline preload="none"></video>
+    <p class="skor" id="skorText"></p>
+    <p class="skor big">Повтори три раза!</p>
+  </section>
+
+  <!-- ЗАДАНИЕ 4. СОБЕРИ СЛОВО (буквы) -->
+  <section class="screen" id="s4">
+    <div class="top"><span>Задание 4 из 6</span><span class="counter" id="cntW"></span></div>
+    <p class="sub green">Собери слово</p>
+    <div class="row" id="wordPicRow"></div>
+    <div class="slots" id="wordSlots"></div>
+    <div class="row" id="letterBox"></div>
+    <div class="feedback" id="fbW"></div>
+  </section>
+
+  <!-- ЗАДАНИЕ 5. ЗАДАЧКИ НА СОСТАВ ЧИСЛА 7 -->
+  <section class="screen" id="s5">
+    <div class="top"><span>Задание 5 из 6</span><span class="counter" id="cntS"></span></div>
+    <p class="sub green">Задачки на 7</p>
+    <p class="sub plain" id="q5Q"></p>
+    <div class="birds" id="sumPics"></div>
+    <p class="example" id="sumExpr"></p>
+    <div class="row" id="sumOpts"></div>
+    <div class="feedback" id="fbS"></div>
+  </section>
+
+  <!-- ЗАДАНИЕ 6. НАЙДИ ПАРУ -->
+  <section class="screen" id="s6">
+    <div class="top"><span>Задание 6 из 6</span><span class="counter" id="cntM"></span></div>
+    <p class="sub green">Найди пару</p>
+    <p class="sub green plain" id="q6Q">Найди две одинаковые картинки!</p>
+    <div class="row" id="pairBox"></div>
+    <div class="feedback" id="fbM"></div>
+  </section>
+
+  <!-- ФИНАЛ: просто видео с пословицей + зелёный текст под видео -->
+  <section class="screen" id="s7">
+    <video class="video" id="viditog" src="video/itog.mp4" poster="images/poster_itog.jpg"
+           playsinline preload="none"></video>
+    <p class="final">«Дерево сильно корнями, а человек — делами!»</p>
+  </section>
+
+  <!-- ИТОГ: звёздочка Яши → видео «Звездочка» → маме -->
+  <section class="screen" id="s8">
+    <div class="stars">⭐</div>
+    <p class="sub green">Держи звездочку!</p>
+    <video class="video" id="vidzv" src="video/zvezdochka.mp4" poster="images/poster_zvezdochka.jpg"
+           playsinline preload="none"></video>
+    <div class="momcard">
+      <p>Маме 💛</p>
+      <p>Полейте вместе домашнее растение или посадите семечко. Похвалите за старание.</p>
+    </div>
+    <button class="btn main" data-act="restart()">Пройти заново</button>
+  </section>
+
+</div>
+<div class="foot" id="foot"></div>
+
+<script>
+/* ════════════════════════════════════════════════════════════════════
+   ЗАНЯТИЕ «РАСТЕНИЯ» (6 лет). По каркасу и занятию «Профессии на транспорте».
+   s0 титул → s1 что нужно растению → s2 что сначала, что потом → s3 посади цветы
+   → ss скороговорка → s4 собери слово → s5 задачки на 7 → s6 найди пару → s7 финал
+   ════════════════════════════════════════════════════════════════════ */
+
+/* Озвучка экранов — записи Наташи (14.10): готовы все, кроме s5_3 (фраза про бегонии — дозапишется) */
+var SCREEN_SAY = { s1:'s1_intro', s2:'s2_intro', s5:'s5_intro', s6:'s6_intro' };
+
+var NEXT = { s0:'s1', s1:'s2', s2:'s3', s3:'ss', ss:'s4', s4:'s5', s5:'s6', s6:'s7', s7:'s8', s8:'' };
+var PREV = { s1:'s0', s2:'s1', s3:'s2', ss:'s3', s4:'ss', s5:'s4', s6:'s5', s7:'s6', s8:'s7' };
+function goBack(){ hush(); var on = document.querySelector('.screen.on'); if(!on || !PREV[on.id]) return; show(PREV[on.id]); }
+var VIDEO_SHOW = { ss:'vidskor', s7:'viditog', s8:'vidzv' };
+
+/* ═══ ДАННЫЕ ЗАНЯТИЯ ═══ */
+
+/* Задание 1: что нужно растению — 4 нужных, 2 ловушки */
+var NEED = [
+  { img:'voda.jpg',       word:'Вода',    ok:1 },
+  { img:'solnce.jpg',     word:'Солнце',  ok:1 },
+  { img:'zemlya.jpg',     word:'Земля',   ok:1 },
+  { img:'vozduh.jpg',     word:'Воздух',  ok:1 },
+  { img:'konfeta.jpg',    word:'Конфета', ok:0 },
+  { img:'pirozhok.jpg',   word:'Пирожок', ok:0 }
+];
+
+/* Задание 2: последовательность роста растения */
+var ORDER = [
+  { img:'semechko.jpg', word:'Семечко' },
+  { img:'rostok.jpg', word:'Росток' },
+  { img:'list.jpg',   word:'Лист' },
+  { img:'stebel.jpg', word:'Стебель' },
+  { img:'cvetok.jpg', word:'Цветок' }
+];
+
+/* Задание 3: посади цветы — 4 раунда (3 → 6 → 9 → 10) */
+var G_TARGETS = [
+  { n:3,  w:'цветочка' },
+  { n:6,  w:'цветочков' },
+  { n:9,  w:'цветочков' },
+  { n:10, w:'цветочков' }
+];
+
+/* Задание 4: собери слово (деревья) — в наборе буквы слова, всего не больше 7 клеток */
+var WORDS = [
+  { pic:'dub.jpg',    word:'ДУБ',   pool:'ДУБКМ',  key:'dub' },
+  { pic:'klen.jpg',   word:'КЛЁН',  pool:'КЛЁНТВ', key:'klen' },
+  { pic:'el.jpg',     word:'ЕЛЬ',   pool:'ЕЛЬСА',  key:'el' },
+  { pic:'bereza.jpg', word:'БЕРЁЗА',pool:'БЕРЁЗАК', key:'bereza' },
+  { pic:'sosna.jpg',  word:'СОСНА', pool:'СОСНАЕЛ', key:'sosna' }
+];
+
+/* Задание 5: задачки на состав числа 7 — пример показываем картинками (по чек-листу) */
+var SUMS = [
+  { q:'На полянке росли 4 клёна и 3 ели. Сколько деревьев на полянке?',
+    rows:[{i:'zad_klen.jpg',n:4},{i:'zad_el.jpg',n:3}],
+    expr:'4 + 3 = ?', ans:'7', wrong:['6','8'] },
+  { q:'В цветнике росли 5 красных тюльпанов и 2 жёлтых. Сколько всего тюльпанов в цветнике?',
+    rows:[{i:'tyulpan_kras.jpg',n:5},{i:'tyulpan_zhelt.jpg',n:2}],
+    expr:'5 + 2 = ?', ans:'7', wrong:['8','6'] },
+  { q:'В комнате стояло 6 белых бегоний и один кактус. Сколько домашних растений в комнате?',
+    rows:[{i:'begonia.jpg',n:6},{i:'kaktus.jpg',n:1}],
+    expr:'6 + 1 = ?', ans:'7', wrong:['5','8'] }
+];
+
+/* Задание 6: найди пару — пары выбираются СЛУЧАЙНО из пула картинок
+   (ур.1: 3 пары = 6 карточек, ур.2: 4 пары = 8 карточек) */
+var PAIR_POOL = [
+  { img:'astra.jpg',      word:'Астра' },
+  { img:'el.jpg',         word:'Ель' },
+  { img:'list_klena.jpg', word:'Лист' },
+  { img:'dub.jpg',        word:'Дуб' },
+  { img:'hvoya.jpg',      word:'Хвоя' }
+];
+function randPairs(n){ return shuffle(PAIR_POOL).slice(0, n); }
+
+/* Текст скороговорки */
+var SKOR_TEXT = 'У ёлки иголки колки!';
+
+/* Весёлый герой после выполненного задания */
+var REW = {
+  s1: { i:'natasha_ura.jpg',                 t:'Молодец!' },
+  s2: { i:'balovashka_ura_2.jpg',            t:'Здорово!' },
+  s3: { i:'natasha_serdechki.jpg',           t:'Умница!' },
+  s4: { i:'balovashka_serdechki_prygaet.jpg',t:'Ты всё собрал!' },
+  s5: { i:'geroi_yasha_pohvala.jpg',         t:'Отлично!' },
+  s6: { i:'balovashka_serdechki_lezhit.jpg', t:'Ты всё нашёл!' }
+};
+
+/* ═══════════════════════════════ КОД ДАЛЬШЕ НЕ ТРОГАЕМ ═══════════════════════════════ */
+
+var PRAISE = ['genialno','tochno2','p_molodec','p_da','p_konechno','p_soglasna','p_aga','p_verno','p_ty_prav','p_konechno2'];
+var HAVE = PRAISE.concat(['ne_tochno','nothing','star3','fin_molodec','povtori',
+  's1_intro','s1_ok','s2_intro','s3_1','s3_2','s3_3','s3_4',
+  's4_dub','s4_klen','s4_el','s4_bereza','s4_sosna',
+  's5_intro','s5_1','s5_2','s5_3','s6_intro']);
+var HAS_IMG = {};
+function loadImgList(list){ list.forEach(function(f){ HAS_IMG[f]=1; }); }
+function picture(src, cls){
+  if(HAS_IMG[src]) return '<img src="images/'+src+'" class="'+(cls||'')+'" alt="">';
+  return '';
+}
+function q(id){ return document.getElementById(id); }
+function shuffle(a){
+  a = a.slice();
+  for(var i = a.length-1; i > 0; i--){ var j = Math.floor(Math.random()*(i+1)); var t = a[i]; a[i] = a[j]; a[j] = t; }
+  return a;
+}
+function shuffleNotAdjacent(items, trapKey){
+  /* ловушки не должны стоять рядом */
+  for(var attempt = 0; attempt < 60; attempt++){
+    var r = shuffle(items);
+    var traps = [];
+    r.forEach(function(x, i){ if(!x[trapKey]) traps.push(i); });
+    if(Math.abs(traps[0] - traps[1]) > 1) return r;
+  }
+  return r;
+}
+var VOW = 'АЕЁИОУЫЭЮЯ';
+function paint(s){
+  return String(s).split('').map(function(ch){
+    if(VOW.indexOf(ch.toUpperCase()) > -1) return '<span class="vowel">'+ch+'</span>';
+    if(/[А-Яа-яЁё]/.test(ch)) return '<span class="cons">'+ch+'</span>';
+    return ch;
+  }).join('');
+}
+var current = null, lastPraise = '', unlocked = false;
+function hush(){ if(current){ try{ current.pause(); current.currentTime = 0; }catch(e){} } }
+function play(key){
+  hush();
+  if(HAVE.indexOf(key) > -1){ try{ current = new Audio('sounds/'+key+'.mp3'); current.play().catch(function(){}); }catch(e){} }
+}
+function praise(){
+  var pool = PRAISE.filter(function(x){ return x !== lastPraise; });
+  var pick = pool[Math.floor(Math.random()*pool.length)];
+  lastPraise = pick; play(pick);
+}
+function playVideo(id){
+  var v = q(id); if(!v) return;
+  try{ v.currentTime = 0; v.muted = false; v.play().catch(function(){ v.muted = true; v.play().catch(function(){}); }); }catch(e){}
+}
+function bindTapVideo(id){
+  var v = q(id); if(!v) return;
+  v.addEventListener('pointerdown', function(e){
+    e.preventDefault();
+    if(v.paused){ v.play().catch(function(){}); } else { v.pause(); }
+  });
+}
+function footNext(id, text){
+  var old = q('foot').querySelector('[data-act^="go("]');
+  if(old) old.remove();
+  var b = document.createElement('button');
+  b.className = 'btn main'; b.setAttribute('data-act','go("'+id+'")'); b.textContent = text || 'Дальше ➡';
+  q('foot').appendChild(b);
+}
+function giveSkip(id){
+  if(q('skip_'+id)) return;
+  var b = document.createElement('button');
+  b.className = 'btn'; b.id = 'skip_'+id;
+  b.setAttribute('data-act','go("'+NEXT[id]+'")'); b.textContent = 'Пропустить ➡';
+  q('foot').appendChild(b);
+}
+/* эмоции: радость после каждого верного ответа, поддержка при ошибке */
+function heroReward(id){
+  var r = REW[id]; if(!r) return;
+  var host = document.querySelector('.screen.on'); if(!host) return;
+  var old = host.querySelector('.heroReward'); if(old) old.remove();
+  var th = host.querySelector('.heroThink'); if(th) th.remove();
+  var em = host.querySelector('.heroEmotion'); if(em) em.remove();
+  var d = document.createElement('div');
+  d.className = 'heroReward';
+  d.innerHTML = picture(r.i) + (r.t ? '<div class="hrtext">' + r.t + '</div>' : '');
+  host.appendChild(d);
+}
+function heroEmotion(img, txt, beforeId){
+  var host = document.querySelector('.screen.on'); if(!host) return;
+  var old = host.querySelector('.heroEmotion'); if(old) old.remove();
+  var th = host.querySelector('.heroThink'); if(th) th.remove();
+  var d = document.createElement('div');
+  d.className = 'heroEmotion';
+  d.innerHTML = picture(img) + (txt ? '<div class="hrtext">' + txt + '</div>' : '');
+  if(beforeId && q(beforeId)){ q(beforeId).parentNode.insertBefore(d, q(beforeId)); }
+  else { host.appendChild(d); }
+}
+function heroThink(){
+  var host = document.querySelector('.screen.on'); if(!host) return;
+  var old = host.querySelector('.heroThink'); if(old) old.remove();
+  var d = document.createElement('div');
+  d.className = 'heroThink';
+  d.innerHTML = picture('balovashka_dumaet.jpg') + '<div class="hrtext">Подумай ещё!</div>';
+  host.appendChild(d);
+}
+function clearThink(){
+  var host = document.querySelector('.screen.on'); if(!host) return;
+  var th = host.querySelector('.heroThink'); if(th) th.remove();
+}
+function show(id){
+  hush();
+  [].slice.call(document.querySelectorAll('video')).forEach(function(v){ try{ v.pause(); v.currentTime = 0; }catch(e){} });
+  [].slice.call(document.querySelectorAll('.screen')).forEach(function(s){ s.classList.remove('on'); });
+  q(id).classList.add('on');
+  q('backBtn').style.display = (id === 's0' || id === 's7' || id === 's8') ? 'none' : 'block';
+  q('foot').innerHTML = '';
+  if(id === 'ss' || id === 's7'){                      /* видео-экраны: «Дальше» всегда доступно */
+    footNext(NEXT[id], 'Дальше ➡');
+  }
+  if(VIDEO_SHOW[id]) playVideo(VIDEO_SHOW[id]);
+  if(ONSHOW[id]) ONSHOW[id]();
+  var key = SCREEN_SAY[id];
+  if(key) play(key);
+}
+function go(id){ show(id); }
+function restart(){ location.reload(); }
+var ONSHOW = {};
+
+['pointerdown','touchstart','click'].forEach(function(ev){
+  document.addEventListener(ev, function(){
+    if(unlocked) return; unlocked = true;
+    try{ new Audio('sounds/nothing.mp3').play().catch(function(){}); }catch(e){}
+  }, true);
+});
+
+loadImgList(['logo.png','poster_logo.jpg','poster_nachalo.jpg','poster_skorogovorka.jpg','poster_itog.jpg','poster_zvezdochka.jpg',
+  'voda.jpg','solnce.jpg','zemlya.jpg','vozduh.jpg','konfeta.jpg','pirozhok.jpg','rastenie.jpg',
+  'semechko.jpg','rostok.jpg','list.jpg','stebel.jpg','cvetok.jpg','gryadka.jpg','zerno.jpg',
+  'dub.jpg','klen.jpg','el.jpg','bereza.jpg','sosna.jpg',
+  'astra.jpg','list_klena.jpg','hvoya.jpg',
+  'tyulpan_kras.jpg','tyulpan_zhelt.jpg','begonia.jpg','kaktus.jpg','zad_klen.jpg','zad_el.jpg',
+  'balovashka_dumaet.jpg','balovashka_ura_2.jpg','balovashka_serdechki_prygaet.jpg',
+  'balovashka_serdechki_lezhit.jpg','natasha_ura.jpg','natasha_serdechki.jpg',
+  'geroi_yasha_pohvala.jpg','geroi_natasha_pohvala.jpg','yasha_vostorg_iskry.jpg','itog_zvezdochka.jpg']);
+
+bindTapVideo('vidnach'); bindTapVideo('vidskor'); bindTapVideo('viditog'); bindTapVideo('vidzv');
+
+/* ── ТИТУЛ: «Играть» запускает видео «Начало», после ролика — сразу задание 1 ── */
+function playStart(){
+  hush();
+  var v = q('vidnach');
+  if(v && v.dataset.started === '1' && !v.paused) return;
+  if(v) v.dataset.started = '1';
+  playVideo('vidnach');
+  footNext(NEXT.s0, 'Продолжить ➡');
+}
+q('vidnach').addEventListener('ended', function(){ if(q('s0').classList.contains('on')) show(NEXT.s0); });
+setTimeout(function(){ if(q('s0').classList.contains('on')) footNext(NEXT.s0, 'Продолжить ➡'); }, 8000);
+
+/* ── 1. ЧТО НУЖНО РАСТЕНИЮ ─────────────────────────────────────────── */
+var needFound = 0, needErr = 0;
+ONSHOW['s1'] = function(){
+  needFound = 0; needErr = 0;
+  q('needPic').src = 'images/rastenie.jpg';
+  q('cntN').textContent = 'Найдено: 0 из 4';
+  q('fbN').textContent = '';
+  var box = q('needBox'); box.innerHTML = '';
+  shuffleNotAdjacent(NEED, 'ok').forEach(function(it){
+    var c = document.createElement('div');
+    c.className = 'card';
+    c.innerHTML = '<img class="pic" src="images/' + it.img + '"><div class="word">' + paint(it.word) + '</div>';
+    c.setAttribute('data-act', 'needPick(el,' + it.ok + ')');
+    box.appendChild(c);
+  });
+};
+function needPick(el, ok){
+  if(el.classList.contains('done') || el.classList.contains('gone')) return;
+  if(ok){
+    needErr = 0; clearThink();
+    el.classList.add('done');
+    el.style.borderColor = '#2E7D32';
+    el.style.background = '#F0F7F0';
+    needFound++;
+    q('cntN').textContent = 'Найдено: ' + needFound + ' из 4';
+    if(needFound === 4){
+      q('fbN').textContent = 'Молодец!';
+      heroReward('s1');
+      play('s1_ok');   /* голос Наташи: «Правильно! Воздух, земля, солнце, вода» */
+      setTimeout(function(){ footNext(NEXT.s1, 'Дальше ➡'); }, 3600);
+    } else {
+      heroEmotion('yasha_vostorg_iskry.jpg', 'Верно!');
+      play('p_da');
+    }
+  } else {
+    el.classList.add('shake');
+    setTimeout(function(){ el.classList.remove('shake'); }, 500);
+    q('fbN').textContent = 'Подумай ещё!';
+    play('ne_tochno');
+    heroThink();
+    if(++needErr >= 3) giveSkip('s1');
+  }
+}
+
+/* ── 2. ЧТО СНАЧАЛА, ЧТО ПОТОМ ─────────────────────────────────────── */
+var ordNext = 0, ordErr = 0;
+ONSHOW['s2'] = function(){
+  ordNext = 0; ordErr = 0;
+  q('fbP').textContent = '';
+  var slots = q('slotRow'); slots.innerHTML = '';
+  ORDER.forEach(function(st, i){
+    var s = document.createElement('div');
+    s.className = 'slot';
+    s.id = 'slot' + i;
+    s.textContent = (i + 1);
+    slots.appendChild(s);
+  });
+  var box = q('orderBox'); box.innerHTML = '';
+  shuffle(ORDER).forEach(function(st, i){
+    var c = document.createElement('div');
+    c.className = 'card';
+    c.innerHTML = '<img src="images/' + st.img + '"><div class="word">' + paint(st.word) + '</div>';
+    c.setAttribute('data-act', 'orderPick(el,' + i + ')');
+    c.dataset.idx = ORDER.indexOf(st);
+    box.appendChild(c);
+  });
+};
+function orderPick(el, cardPos){
+  if(el.classList.contains('gone')) return;
+  var want = parseInt(el.dataset.idx, 10);
+  if(want === ordNext){
+    ordErr = 0; clearThink();
+    el.classList.add('gone');
+    var s = q('slot' + ordNext);
+    s.classList.add('filled');
+    s.textContent = '';
+    var im = document.createElement('img');
+    im.src = 'images/' + ORDER[ordNext].img;
+    s.appendChild(im);
+    ordNext++;
+    if(ordNext === ORDER.length){
+      q('fbP').textContent = 'Молодец! Всё по порядку!';
+      praise();
+      heroReward('s2');
+      setTimeout(function(){ footNext(NEXT.s2, 'Дальше ➡'); }, 1800);
+    } else {
+      heroEmotion('natasha_ura.jpg', 'Верно!');
+      play('p_da');
+    }
+  } else {
+    el.classList.add('shake');
+    setTimeout(function(){ el.classList.remove('shake'); }, 500);
+    q('fbP').textContent = 'Что было сначала?';
+    play('ne_tochno');
+    heroThink();
+    if(++ordErr >= 3) giveSkip('s2');
+  }
+}
+
+/* ── 3. ПОСАДИ ЦВЕТЫ (3 → 6 → 9 → 10): одно семечко, сажаем под грядкой ── */
+var gRound = 0, gPlanted = 0, gErr = 0;
+ONSHOW['s3'] = function(){
+  gRound = 0; gPlanted = 0; gErr = 0;
+  q('bedPic').src = 'images/gryadka.jpg';
+  q('fbG').textContent = '';
+  drawGarden();
+};
+function drawGarden(){
+  var t = G_TARGETS[gRound];
+  var n = t.n;
+  q('q3Q').innerHTML = 'Посади <span class="bign">' + n + '</span> ' + t.w + '!';
+  q('cntG').textContent = 'Посажено: 0 из ' + n;
+  q('plantedRow').innerHTML = '';
+  q('seedBtn').style.display = '';
+  play('s3_' + (gRound + 1));   /* голос: «Посади три/6/девять/10 цветочков» */
+}
+function plantPick(el){
+  var n = G_TARGETS[gRound].n;
+  if(gPlanted >= n) return;
+  gPlanted++;
+  var im = document.createElement('img');
+  im.src = 'images/zerno.jpg';
+  q('plantedRow').appendChild(im);
+  q('cntG').textContent = 'Посажено: ' + gPlanted + ' из ' + n;
+  if(gPlanted === n){
+    gErr = 0; clearThink();
+    /* семечки превращаются в цветочки */
+    var row = q('plantedRow'); row.innerHTML = '';
+    var fl = document.createElement('div');
+    fl.className = 'fl';
+    fl.textContent = '🌸';
+    for(var i = 0; i < n; i++){ row.appendChild(fl.cloneNode(true)); }
+    q('fbG').textContent = 'Клумба расцвела!';
+    heroEmotion('natasha_serdechki.jpg', '');
+    praise();
+    setTimeout(function(){
+      gRound++;
+      gPlanted = 0;
+      q('fbG').textContent = '';
+      if(gRound < G_TARGETS.length){
+        drawGarden();
+      } else {
+        heroReward('s3');
+        q('seedBtn').style.display = 'none';
+        footNext(NEXT.s3, 'Дальше ➡');
+      }
+    }, 1600);
+  } else {
+    play('p_da');
+  }
+}
+
+/* ── 4. СОБЕРИ СЛОВО (деревья) ─────────────────────────────────────── */
+var wRound = 0, wCur = '', wErr = 0;
+ONSHOW['s4'] = function(){ wRound = 0; wErr = 0; drawWord(); };
+function drawWord(){
+  var it = WORDS[wRound];
+  wCur = '';
+  play('s4_' + it.key);   /* голос: «Собери слово ДУБ/КЛЁН/…» */
+  q('cntW').textContent = 'Слово ' + (wRound + 1) + ' из ' + WORDS.length;
+  q('fbW').textContent = '';
+  var row = q('wordPicRow'); row.innerHTML = '';
+  if(it.pic){
+    row.innerHTML = '<img class="taskpic" src="images/' + it.pic + '">';
+  } else {
+    row.innerHTML = '<div class="placeholder">🖼 картинка «' + it.word + '»</div>';
+  }
+  var slots = q('wordSlots'); slots.innerHTML = '';
+  for(var i = 0; i < it.word.length; i++){
+    var s = document.createElement('div');
+    s.className = 'slot ls';
+    /* бледная подсказка: буква видна призраком, ребёнок подбирает и читает сам */
+    s.innerHTML = '<span class="ghost">' + paint(it.word.charAt(i)) + '</span>';
+    slots.appendChild(s);
+  }
+  var box = q('letterBox'); box.innerHTML = '';
+  shuffle(it.pool.split('')).forEach(function(L){
+    var b = document.createElement('button');
+    b.className = 'btn let';
+    b.innerHTML = paint(L);
+    b.setAttribute('data-act', 'letterPick(el,"' + L + '")');
+    box.appendChild(b);
+  });
+}
+function letterPick(el, L){
+  if(el.disabled) return;
+  var it = WORDS[wRound];
+  if(wCur.length >= it.word.length) return;
+  if(it.word.charAt(wCur.length) === L){
+    wErr = 0; clearThink();
+    el.disabled = true;
+    var slots = q('wordSlots').querySelectorAll('.ls');
+    slots[wCur.length].innerHTML = paint(L);
+    slots[wCur.length].style.borderColor = '#2E7D32';
+    wCur += L;
+    if(wCur === it.word){
+      q('fbW').textContent = 'Молодец! Это слово «' + it.word + '»!';
+      praise();
+      if(wRound < WORDS.length - 1){
+        heroEmotion('yasha_vostorg_iskry.jpg', 'Верно!');
+        wRound++;
+        setTimeout(drawWord, 1600);
+      } else {
+        heroReward('s4');
+        setTimeout(function(){ footNext(NEXT.s4, 'Дальше ➡'); }, 1800);
+      }
+    } else {
+      play('p_da');
+    }
+  } else {
+    el.classList.add('shake');
+    setTimeout(function(){ el.classList.remove('shake'); }, 500);
+    q('fbW').textContent = 'Какая буква следующая?';
+    play('ne_tochno');
+    heroThink();
+    if(++wErr >= 3) giveSkip('s4');
+  }
+}
+
+/* ── 5. ЗАДАЧКИ НА СОСТАВ ЧИСЛА 7 ──────────────────────────────────── */
+var sRound = 0, sErr = 0;
+ONSHOW['s5'] = function(){
+  sRound = 0; sErr = 0; drawSum();
+  /* после вступления «Реши задачки» — первая задача голосом */
+  setTimeout(function(){ play('s5_1'); }, 2800);
+};
+function drawSum(){
+  var it = SUMS[sRound];
+  q('cntS').textContent = 'Задачка ' + (sRound + 1) + ' из ' + SUMS.length;
+  q('fbS').textContent = '';
+  q('q5Q').textContent = it.q;
+  var pics = q('sumPics'); pics.innerHTML = '';
+  it.rows.forEach(function(r){
+    var line = document.createElement('div');
+    line.className = 'birds';
+    for(var i = 0; i < r.n; i++){
+      var im = document.createElement('img');
+      im.src = 'images/' + r.i;
+      if(r.big) im.className = 'big';
+      line.appendChild(im);
+    }
+    pics.appendChild(line);
+  });
+  var ex = q('sumExpr'); ex.classList.remove('solved');
+  ex.textContent = it.expr;
+  var box = q('sumOpts'); box.innerHTML = '';
+  shuffle([it.ans].concat(it.wrong)).forEach(function(v){
+    var b = document.createElement('button');
+    b.className = 'btn';
+    b.style.minWidth = '84px';
+    b.textContent = v;
+    b.setAttribute('data-act', 'sumPick(el,"' + v + '")');
+    box.appendChild(b);
+  });
+}
+function sumPick(el, v){
+  var it = SUMS[sRound];
+  if(v === it.ans){
+    sErr = 0; clearThink();
+    el.classList.add('ok');
+    [].slice.call(q('sumOpts').children).forEach(function(b){ if(b !== el) b.remove(); });
+    var ex = q('sumExpr'); ex.classList.add('solved');
+    ex.textContent = it.expr.replace('?', it.ans) + '!';
+    if(sRound < SUMS.length - 1){
+      heroEmotion('yasha_vostorg_iskry.jpg', 'Верно!');
+      praise();
+      setTimeout(function(){
+        sRound++;
+        drawSum();
+        play('s5_' + (sRound + 1));   /* голос следующей задачки (s5_3 — появится, когда запишешь) */
+      }, 2100);
+    } else {
+      praise();
+      heroReward('s5');
+      setTimeout(function(){ footNext(NEXT.s5, 'Дальше ➡'); }, 1800);
+    }
+  } else {
+    el.classList.add('shake');
+    setTimeout(function(){ el.classList.remove('shake'); }, 500);
+    q('fbS').textContent = 'Посчитай ещё раз!';
+    play('ne_tochno');
+    heroThink();
+    if(++sErr >= 3) giveSkip('s5');
+  }
+}
+
+/* ── 6. НАЙДИ ПАРУ — МЕМОРИ (ур.1: 6 карточек, ур.2: 8 карточек поменьше) ── */
+var memSel = null, memLock = false, pairLeft = 0, pairLv = 1, pairErr = 0;
+ONSHOW['s6'] = function(){ pairLv = 1; pairErr = 0; drawPairs(1); };
+function drawPairs(lv){
+  memSel = null; memLock = false;
+  q('fbM').textContent = '';
+  var list = randPairs(lv === 1 ? 3 : 4);
+  if(lv === 1){
+    q('q6Q').textContent = 'Запомни и найди пары!';
+    q('cntM').textContent = 'Пары: 0 из 3';
+  } else {
+    q('q6Q').textContent = 'Отлично! Теперь сложнее!';
+    q('cntM').textContent = 'Пары: 0 из 4';
+  }
+  var items = list.concat(list);
+  pairLeft = list.length;
+  var box = q('pairBox'); box.innerHTML = '';
+  shuffle(items).forEach(function(it){
+    var c = document.createElement('div');
+    c.className = 'memcard' + (lv === 2 ? ' small' : '');
+    c.innerHTML = '<div class="in">' +
+      '<div class="face back">🌿</div>' +
+      '<div class="face front"><img src="images/' + it.img + '"><div class="word">' + paint(it.word) + '</div></div>' +
+      '</div>';
+    c.dataset.key = it.img;
+    c.setAttribute('data-act', 'memPick(el)');
+    box.appendChild(c);
+  });
+}
+function memPick(el){
+  if(memLock || el.classList.contains('flipped') || el.classList.contains('gone')) return;
+  el.classList.add('flipped');
+  if(!memSel){ memSel = el; return; }
+  var first = memSel; memSel = null;
+  if(first.dataset.key === el.dataset.key){
+    pairErr = 0; clearThink();
+    pairLeft--;
+    q('cntM').textContent = 'Пары: ' + (pairLv === 1 ? 3 - pairLeft : 4 - pairLeft) + ' из ' + (pairLv === 1 ? 3 : 4);
+    heroEmotion('natasha_serdechki.jpg', '');
+    play('p_da');
+    setTimeout(function(){ first.classList.add('gone'); el.classList.add('gone'); }, 550);
+    if(pairLeft === 0){
+      if(pairLv === 1){
+        q('fbM').textContent = 'Молодец! Уровень 2!';
+        praise();
+        pairLv = 2;
+        setTimeout(function(){ drawPairs(2); }, 1600);
+      } else {
+        q('fbM').textContent = 'Молодец! Все пары найдены!';
+        praise();
+        heroReward('s6');
+        setTimeout(function(){ footNext(NEXT.s6, 'Дальше ➡'); }, 1800);
+      }
+    }
+  } else {
+    memLock = true;
+    q('fbM').textContent = 'Это не пара. Смотри внимательно!';
+    play('ne_tochno');
+    heroThink();
+    setTimeout(function(){
+      first.classList.remove('flipped');
+      el.classList.remove('flipped');
+      memLock = false;
+    }, 900);
+    if(++pairErr >= 3) giveSkip('s6');
+  }
+}
+
+/* ── ФИНАЛ: сначала просто видео с пословицей, без звука перед ним ── */
+ONSHOW['s7'] = function(){};
+/* Итог: звёздочка, «Держи звездочку!» и видео «Встретимся через день» играют при входе */
+var __skor = function(){
+  q('skorText').textContent = SKOR_TEXT;
+};
+q('vidskor').addEventListener('ended', function(){ play('povtori'); });
+var ONSHOW_SS = ONSHOW['ss'];
+ONSHOW['ss'] = function(){ __skor(); };
+
+/* ── клики: всё на касание (pointerdown), как требует чек-лист ── */
+document.addEventListener('pointerdown', function(e){
+  var el = e.target.closest ? e.target.closest('[data-act]') : null;
+  if(!el) return;
+  e.preventDefault();
+  var code = el.getAttribute('data-act');
+  try{ (new Function('var el=arguments[0];' + code))(el); }catch(err){}
+}, false);
+
+show('s0');
+</script>
+</body>
+</html>
